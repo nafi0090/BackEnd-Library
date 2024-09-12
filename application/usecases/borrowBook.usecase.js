@@ -1,24 +1,41 @@
-class BorrowBookUseCase {
-    constructor(bookService, memberService, borrowingRepository) {
-        this.bookService = bookService;
-        this.memberService = memberService;
-        this.borrowingRepository = borrowingRepository;
-    }
+const BORROWING_REPOSITORY = require('../../infrastructure/repositories/borrow.repository');
+const MEMBER_REPOSITORY = require('../../infrastructure/repositories/member.repository');
+const BOOK_REPOSITORY = require('../../infrastructure/repositories/book.repository');
 
-    async execute(memberId, bookId) {
-        const member = await this.memberService.getMemberBorrowing(memberId);
-        const availableBooks = await this.bookService.getAvailableBooks();
+class BORROW_USECASE {
+    static async borrow(data) {
+        const {
+            memberId,
+            bookId
+        } = data;
 
-        if (member.isPenalized()) {
-            throw new Error("Member is penalized and cannot borrow books.");
+        const findIdMember = await MEMBER_REPOSITORY.findId(memberId);
+        if (!findIdMember) {
+            throw new Error('Member Id not found')
         }
 
-        if (availableBooks.length === 0) {
-            throw new Error("No available books to borrow.");
+        const findIdBook = await BOOK_REPOSITORY.findId(bookId);
+        if (!findIdBook) {
+            throw new Error('Book Id not found')
         }
 
-        await this.borrowingRepository.borrowBook(memberId, bookId);
+        const borrowedBook = await BORROWING_REPOSITORY.findIdBook(bookId);
+        if (!borrowedBook) {
+            throw new Error('Book is already borrowed by another member')
+        }
+
+        const borrowedMember = await BORROWING_REPOSITORY.countId(memberId);
+        if (borrowedMember[0].count >= 2) {
+            throw new Error('Member cannot be borrowed more than 2 books')
+        }
+
+        const penaltyMember = await MEMBER_REPOSITORY.penaltyMember(memberId);
+        if (penaltyMember[0].penaltyEndDate != null) {
+            throw new Error('Member is currently penalized')
+        }
+
+        return data
     }
 }
 
-module.exports = BorrowBookUseCase;
+module.exports = BORROW_USECASE;

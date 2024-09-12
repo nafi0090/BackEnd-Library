@@ -4,7 +4,7 @@ const BOOK_DOMAIN = require('../../domain/entites/book.entities');
 class BOOK_REPOSITORY {
     static async index() {
         try {
-            const query = "SELECT * FROM book ORDER BY id ASC";
+            const query = "SELECT * FROM book WHERE stock = 1 ORDER BY id ASC";
             const result_query = await db.query(query);
             const result = result_query.rows;
             return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
@@ -51,7 +51,12 @@ class BOOK_REPOSITORY {
 
     static async create(data) {
         try {
-            const { code, title, author, stock } = data;
+            const {
+                code,
+                title,
+                author,
+                stock
+            } = data;
             const checkCode = await this.findCode(code);
 
             if (checkCode.length > 0) {
@@ -70,7 +75,12 @@ class BOOK_REPOSITORY {
 
     static async updateData(id, data) {
         try {
-            const { code, title, author, stock } = data;
+            const {
+                code,
+                title,
+                author,
+                stock
+            } = data;
             const findId = await this.findId(id);
             const checkCode = await this.findCode(code);
 
@@ -92,6 +102,17 @@ class BOOK_REPOSITORY {
         }
     }
 
+    static async decreaseStock(id) {
+        try {
+            const query = "UPDATE book SET stock = 0 WHERE id = $1";
+            const result_query = await db.query(query, [id]);
+            return result_query.rows;
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to decrease stock book");
+        }
+    }
+
     static async deleteData(id) {
         try {
             const findId = await this.findId(id);
@@ -102,7 +123,9 @@ class BOOK_REPOSITORY {
 
             const query = "DELETE FROM book WHERE id = $1";
             await db.query(query, [id]);
-            return { success: true };
+            return {
+                success: true
+            };
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Failed to delete book");

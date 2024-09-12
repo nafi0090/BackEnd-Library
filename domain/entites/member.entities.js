@@ -1,24 +1,10 @@
 class Member {
-    constructor(id, code, name, penaltyEndDate) {
+    constructor(id, code, name, penaltyenddate, borrowedbook) {
         this.id = id;
         this.code = code;
         this.name = name;
-        this.penaltyEndDate = penaltyEndDate;
-    }
-
-    // check if currently penalty is active
-    isPenalty() {
-        if (!this.penaltyEndDate) {
-            return false;
-        }
-        return new Date() < new Date(this.penaltyEndDate);
-    }
-
-    // update penalty status
-    updatePenalty(days) {
-        const penaltyEndDate = new Date();
-        penaltyEndDate.setDate(penaltyEndDate.getDate() + days);
-        this.penaltyEndDate = penaltyEndDate;
+        this.penaltyenddate = penaltyenddate;
+        this.borrowedbook = borrowedbook;
     }
 }
 

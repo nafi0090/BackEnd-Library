@@ -1,51 +1,69 @@
 const db = require('../config/db.config');
+const BORROWING_ENTITY = require('../../domain/entites/borrow.entites');
 
-const BORROWING = {
-    index: async () => {
+class BORROWING_REPOSITORY {
+    static async index() {
         try {
-            const query = "SELECT * FROM Borrowing ORDER BY id ASC";
-            const result = await db.query(query);
-            return result.rows;
+            const query = "SELECT * FROM borrowing ORDER BY id ASC";
+            const result_query = await db.query(query);
+            const result = result_query.rows;
+            return result.map(results => new BORROWING_ENTITY(results.id, results.memberid, results.bookid, results.borrowedDate));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Borrowing");
+            throw new Error("Error: Failed to get data Borrowing");
         }
-    },
-    findId: async (id) => {
+    }
+
+    static async findId(id) {
         try {
-            const query = "SELECT * FROM Borrowing WHERE id = $1";
-            const result = await this.db.query(query, [id]);
-            return result.rowsl;
+            const query = "SELECT * FROM borrowing WHERE id = $1 ORDER BY id ASC";
+            const result_query = await db.query(query, [id]);
+            return result_query.rows;
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Borrowing by Id");
+            throw new Error("Error: Failed to get data Borrowing");
         }
-    },
-    create: async (data) => {
+    }
+
+    static async countId(id) {
+        try {
+            const query = "SELECT COUNT(*) FROM borrowing WHERE memberid = $1";
+            const result_query = await db.query(query, [id]);
+            return result_query.rows;
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to get data Borrowing");
+        }
+    }
+
+    static async findIdBook(id) {
+        try {
+            const query = "SELECT * FROM borrowing WHERE bookid = $1 ORDER BY id ASC";
+            const result_query = await db.query(query, [id]);
+            return result_query.rows;
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to get data Borrowing");
+        }
+    }
+
+    static async create(data) {
         try {
             const {
                 memberId,
-                bookId,
-                borrowedDate
+                bookId
             } = data;
-            const query = "INSERT INTO Borrowing (memberId, bookId, borrowedDate) VALUES ($1, $2, $3) RETURNING *";
-            const result = await this.db.query(query, [memberId, bookId, borrowedDate]);
-            return result.rows;
+            // 
+            // const query = "WITH inserted_borrowing AS ( INSERT INTO borrowing (memberId, bookId) VALUES ($1, $2) RETURNING *) UPDATE book SET stock = 0 WHERE id = $2;"
+            const query = "INSERT INTO borrowing (memberid, bookid) VALUES ($1, $2) RETURNING *";
+            const result_query = await db.query(query, [memberId, bookId]);
+            return result_query.rows;
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error create Data Borrowing");
-        }
-    },
-    delete: async (id) => {
-        try {
-            const query = "DELETE FROM Borrowing WHERE id = $1";
-            const result = await this.db.query(query, [id]);
-            return result.rows;
-        } catch (err) {
-            console.error(err.message);
-            throw new Error("Error: Error delete Data Borrowing");
+            throw new Error("Error: Failed to create data borrow");
         }
     }
 }
 
-module.exports = BORROWING
+
+module.exports = BORROWING_REPOSITORY

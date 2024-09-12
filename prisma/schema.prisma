@@ -36,21 +36,21 @@ model member{
 
 model borrowing {
   id Int @id @default(autoincrement())
-  memberId Int
-  bookId Int @unique
+  memberid Int
+  bookid Int @unique
   borrowedDate DateTime @default(now())
 
-  Member member @relation(fields: [memberId], references: [id])
-  book book @relation(fields: [bookId], references: [id])
+  Member member @relation(fields: [memberid], references: [id])
+  book book @relation(fields: [bookid], references: [id])
 }
 
 model history {
   id Int @id @default(autoincrement())
-  memberId Int
-  bookId Int
+  memberid Int
+  bookid Int
   borrowedDate DateTime?
   returnedDate DateTime?
 
-  Member member @relation(fields: [memberId], references: [id])
-  book book @relation(fields: [bookId], references: [id])
+  Member member @relation(fields: [memberid], references: [id])
+  book book @relation(fields: [bookid], references: [id])
 }

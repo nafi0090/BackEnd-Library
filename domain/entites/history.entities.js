@@ -7,10 +7,6 @@ class History {
         this.returnedDate = returnedDate;
     }
 
-    // check has been returned
-    isReturned() {
-        this.returnedDate = new Date(returnedDate)
-    }
 }
 
 module.exports = History

@@ -4,10 +4,10 @@ const MEMBER_DOMAIN = require('../../domain/entites/member.entities');
 class MEMBER_REPOSITORY {
     static async index() {
         try {
-            const query = "SELECT * FROM member ORDER BY id ASC";
+            const query = "SELECT m.id, m.code, m.name,m.penaltyenddate, COUNT(b.id) AS borrowedBook FROM member m LEFT JOIN borrowing b ON m.id = b.memberid GROUP by m.id";
             const result_query = await db.query(query);
             const result = result_query.rows;
-            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyenddate, results.borrowedbook));
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Failed to get data members");
@@ -19,7 +19,7 @@ class MEMBER_REPOSITORY {
             const query = "SELECT * FROM member WHERE id = $1";
             const result_query = await db.query(query, [id]);
             const result = result_query.rows;
-            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyenddate));
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Failed to get member by ID");
@@ -37,6 +37,17 @@ class MEMBER_REPOSITORY {
         }
     }
 
+    static async penaltyMember(id) {
+        try {
+            const query = "SELECT * FROM member WHERE id = $1 ORDER BY id ASC";
+            const result_query = await db.query(query, [id]);
+            return result_query.rows;
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to get data penalty's member");
+        }
+    }
+
     static async create(data) {
         try {
             const {
@@ -51,7 +62,7 @@ class MEMBER_REPOSITORY {
                 const query = "INSERT INTO member (code, name) VALUES ($1, $2) RETURNING *";
                 const result_query = await db.query(query, [code, name]);
                 const result = result_query.rows;
-                return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+                return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyenddate));
             }
         } catch (error) {
             console.error(error.message);
@@ -79,7 +90,7 @@ class MEMBER_REPOSITORY {
             const query = "UPDATE member SET code = $1, name = $2 WHERE id = $3 RETURNING *";
             const result_query = await db.query(query, [code, name, id]);
             const result = result_query.rows;
-            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyenddate));
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Failed to update member");
