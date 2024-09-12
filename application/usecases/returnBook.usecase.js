@@ -1,27 +1,18 @@
-class ReturnBookUseCase {
-    constructor(memberService, borrowingRepository, historyRepository) {
-        this.memberService = memberService;
-        this.borrowingRepository = borrowingRepository;
-        this.historyRepository = historyRepository;
-    }
+const BORROWING_REPOSITORY = require('../../infrastructure/repositories/borrow.repository');
+const MEMBER_REPOSITORY = require('../../infrastructure/repositories/member.repository');
+const BOOK_REPOSITORY = require('../../infrastructure/repositories/book.repository');
 
-    async execute(memberId, bookId, returnDate) {
-        const borrowing = await this.borrowingRepository.findBorrowing(memberId, bookId);
+class RETURN_USECASE {
+    static async returnBook(data) {
+        const {
+            memberid,
+            bookid
+        } = data;
 
-        if (!borrowing) {
-            throw new Error("This book was not borrowed by this member.");
-        }
+        
 
-        const borrowedDate = new Date(borrowing.borrowedDate);
-        const daysBorrowed = (new Date(returnDate) - borrowedDate) / (1000 * 60 * 60 * 24);
-
-        if (daysBorrowed > 7) {
-            await this.memberService.applyPenalty(memberId, 3);
-        }
-
-        await this.historyRepository.addToHistory(memberId, bookId, borrowedDate, returnDate);
-        await this.borrowingRepository.removeBorrowing(memberId, bookId);
+        return data
     }
 }
 
-module.exports = ReturnBookUseCase;
+module.exports = RETURN_USECASE;

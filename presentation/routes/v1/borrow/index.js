@@ -79,10 +79,6 @@ router.get('/', BORROW_CONTROLLER.index);
  *               bookid:
  *                 type: integer
  *                 example: 11
- *               borrowedDate:
- *                 type: string
- *                 format: date-time
- *                 example: '2024-09-12T15:34:33.306Z'
  *     responses:
  *       200:
  *         description: Successfully created a new borrow record

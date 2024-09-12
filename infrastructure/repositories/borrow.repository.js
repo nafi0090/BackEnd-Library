@@ -63,6 +63,11 @@ class BORROWING_REPOSITORY {
             throw new Error("Error: Failed to create data borrow");
         }
     }
+
+    static asyncfindBorrowingByMemberAndBook(data) {
+        
+
+    }
 }
 
 
