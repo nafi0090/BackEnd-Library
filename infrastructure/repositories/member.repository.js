@@ -1,64 +1,109 @@
 const db = require('../config/db.config');
+const MEMBER_DOMAIN = require('../../domain/entites/member.entities');
 
-const MEMBER = {
-    index: async () => {
+class MEMBER_REPOSITORY {
+    static async index() {
         try {
-            const query = "SELECT * FROM Member ORDER BY id ASC";
-            const result = await db.query(query);
+            const query = "SELECT * FROM member ORDER BY id ASC";
+            const result_query = await db.query(query);
+            const result = result_query.rows;
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to get data members");
+        }
+    }
+
+    static async findId(id) {
+        try {
+            const query = "SELECT * FROM member WHERE id = $1";
+            const result_query = await db.query(query, [id]);
+            const result = result_query.rows;
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to get member by ID");
+        }
+    }
+
+    static async findCode(code) {
+        try {
+            const query = "SELECT * FROM member WHERE code = $1";
+            const result = await db.query(query, [code]);
             return result.rows;
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Member");
+            throw new Error("Error: Failed to get member by code");
         }
-    },
-    findId: async (data) => {
-        try {
-            const query = "SELECT * FROM Member WHERE id = $1 ";
-            const result = await this.db.query(query, [data]);
-            return result.rows;
-        } catch (err) {
-            console.error(err.message);
-            throw new Error("Error: Error Get Data Member by Id");
-        }
-    },
-    create: async (data) => {
+    }
+
+    static async create(data) {
         try {
             const {
                 code,
-                name,
-                penaltyEndDate
+                name
             } = data;
-            const query = "INSERT INTO Member (code, name, penaltyEndDate) VALUES ($1, $2, $3) RETURNING *";
-            const result = await this.db.query(query, [code, name, penaltyEndDate]);
-            return result.rows;
-        } catch (err) {
-            console.error(err.message);
-            throw new Error("Error: Error Add Data Member");
+            const checkCode = await this.findCode(code);
+
+            if (checkCode.length > 0) {
+                throw new Error('Error: Code already exists');
+            } else {
+                const query = "INSERT INTO member (code, name) VALUES ($1, $2) RETURNING *";
+                const result_query = await db.query(query, [code, name]);
+                const result = result_query.rows;
+                return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
+            }
+        } catch (error) {
+            console.error(error.message);
+            throw new Error("Error: Failed to add member");
         }
-    },
-    updatePenalty: async (id, data) => {
+    }
+
+    static async updateData(id, data) {
         try {
             const {
-                penaltyEndDate
+                code,
+                name
             } = data;
-            const query = "UPDATE Member SET penaltyEndDate = $1 WHERE id = $2 RETURNING *";
-            const result = await this.db.query(query, [penaltyEndDate, id]);
-            return result.rows;
+            const findId = await this.findId(id);
+            const checkCode = await this.findCode(code);
+
+            if (findId.length === 0) {
+                throw new Error('Error: ID not found');
+            }
+
+            if (checkCode.length > 0) {
+                throw new Error('Error: Code already exists');
+            }
+
+            const query = "UPDATE member SET code = $1, name = $2 WHERE id = $3 RETURNING *";
+            const result_query = await db.query(query, [code, name, id]);
+            const result = result_query.rows;
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.code, results.name, results.penaltyEndDate));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Update Data Penalty Member");
+            throw new Error("Error: Failed to update member");
         }
-    },
-    delete: async (id) => {
+    }
+
+    static async deleteData(id) {
         try {
-            const query = " DELETE FROM Member WHERE id = $1";
-            const result = await this.db.query(query, [id]);
-            return result.rows
+            const findId = await this.findId(id);
+
+            if (findId.length === 0) {
+                throw new Error('Error: ID not found');
+            }
+
+            const query = "DELETE FROM member WHERE id = $1";
+            await db.query(query, [id]);
+            return {
+                success: true
+            };
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error delete Data Member");
+            throw new Error("Error: Failed to delete member");
         }
     }
 }
 
-module.exports = MEMBER;
+module.exports = MEMBER_REPOSITORY;

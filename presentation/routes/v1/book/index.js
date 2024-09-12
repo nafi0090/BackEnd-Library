@@ -26,6 +26,7 @@ const BOOK_CONTROLLER = require('../../../controller/book.controller');
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Books fetched successfully
  *                 data:
  *                   type: array
  *                   items:
@@ -33,23 +34,23 @@ const BOOK_CONTROLLER = require('../../../controller/book.controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: Unique identifier for the book
+ *                         example: 3
  *                       code:
  *                         type: string
- *                         description: Book code
+ *                         example: TRLY00012
  *                       title:
  *                         type: string
- *                         description: Title of the book
+ *                         example: Pulang Pergi
  *                       author:
  *                         type: string
- *                         description: Author of the book
+ *                         example: Tere Liye
  *                       stock:
  *                         type: integer
- *                         description: Number of books available in stock
+ *                         example: 1
+ *       500:
+ *         description: Internal Server Error
  */
-
 router.get('/', BOOK_CONTROLLER.index);
-
 
 /**
  * @swagger
@@ -66,16 +67,19 @@ router.get('/', BOOK_CONTROLLER.index);
  *             properties:
  *               code:
  *                 type: string
+ *                 example: TRLY0001210
  *               title:
  *                 type: string
+ *                 example: Pulang Pergi
  *               author:
  *                 type: string
+ *                 example: Tere Liye
  *               stock:
  *                 type: integer
- * 
+ *                 example: 1
  *     responses:
  *       200:
- *         description: Book created successfully
+ *         description: Books created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -83,8 +87,40 @@ router.get('/', BOOK_CONTROLLER.index);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Books created successfully
  *                 data:
- *                   type: object
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 10
+ *                       code:
+ *                         type: string
+ *                         example: TRLY0001210
+ *                       title:
+ *                         type: string
+ *                         example: Pulang Pergi
+ *                       author:
+ *                         type: string
+ *                         example: Tere Liye
+ *                       stock:
+ *                         type: integer
+ *                         example: 1
+ *       500:
+ *         description: Server error when creating Book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error creating data Book
+ *                 error:
+ *                   type: string
+ *                   example: Failed to create Books from repository
  */
 router.post('/create', BOOK_CONTROLLER.create);
 
@@ -92,15 +128,15 @@ router.post('/create', BOOK_CONTROLLER.create);
  * @swagger
  * /api/v1/book/{id}/update:
  *   put:
- *     summary: Update a book by ID
+ *     summary: Update a book
  *     tags: [Books]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
- *           type: string
+ *           type: integer
  *         required: true
- *         description: ID of the book to update
+ *         description: The ID of the book to update
  *     requestBody:
  *       required: true
  *       content:
@@ -110,15 +146,19 @@ router.post('/create', BOOK_CONTROLLER.create);
  *             properties:
  *               code:
  *                 type: string
+ *                 example: TRLY000090909
  *               title:
  *                 type: string
+ *                 example: Pulang Pergi
  *               author:
  *                 type: string
+ *                 example: Tere Liye
  *               stock:
  *                 type: integer
+ *                 example: 1
  *     responses:
  *       200:
- *         description: Book updated successfully
+ *         description: Books updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -126,27 +166,59 @@ router.post('/create', BOOK_CONTROLLER.create);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Books updated successfully
  *                 data:
- *                   type: object
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 3
+ *                       code:
+ *                         type: string
+ *                         example: TRLY0000909209
+ *                       title:
+ *                         type: string
+ *                         example: Pulang Pergi
+ *                       author:
+ *                         type: string
+ *                         example: Tere Liye
+ *                       stock:
+ *                         type: integer
+ *                         example: 1
+ *       500:
+ *         description: Server error when updating Book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error updating data Book
+ *                 error:
+ *                   type: string
+ *                   example: Failed to update Books from repository
  */
 router.put('/:id/update', BOOK_CONTROLLER.updateData);
 
 /**
  * @swagger
- *  /api/v1/book/{id}/delete:
+ * /api/v1/book/{id}/delete:
  *   delete:
- *     summary: Delete a book by ID
+ *     summary: Delete a book
  *     tags: [Books]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
- *           type: string
+ *           type: integer
  *         required: true
- *         description: ID of the book to delete
+ *         description: The ID of the book to delete
  *     responses:
  *       200:
- *         description: Book deleted successfully
+ *         description: Books deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -154,8 +226,26 @@ router.put('/:id/update', BOOK_CONTROLLER.updateData);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Books deleted successfully
  *                 data:
  *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *       500:
+ *         description: Server error when deleting Book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting data Book
+ *                 error:
+ *                   type: string
+ *                   example: Failed to delete Books from repository
  */
 router.delete('/:id/delete', BOOK_CONTROLLER.deleteData);
 

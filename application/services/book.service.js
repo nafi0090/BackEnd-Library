@@ -1,16 +1,6 @@
 const BOOK_REPOSITORY = require('../../infrastructure/repositories/book.repository');
 
-class BookService {
-    constructor(databook) {
-        this.databook = databook;
-    }
-
-    // get all book available
-    async getAvailableBook() {
-        const books = await this.databook.getAllBooks();
-        return books.filter(book => book.isAvailable());
-    }
-
+class BOOK_SERVICE {
     static async getAllBooks() {
         try {
             const result = await BOOK_REPOSITORY.index();
@@ -47,4 +37,4 @@ class BookService {
     }
 }
 
-module.exports = BookService;
+module.exports = BOOK_SERVICE;

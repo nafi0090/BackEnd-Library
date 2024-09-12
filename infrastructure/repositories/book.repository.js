@@ -6,60 +6,53 @@ class BOOK_REPOSITORY {
         try {
             const query = "SELECT * FROM book ORDER BY id ASC";
             const result_query = await db.query(query);
-            const result = result_query.rows
+            const result = result_query.rows;
             return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Book");
+            throw new Error("Error: Failed to get data books");
         }
     }
 
     static async getDataAvailable() {
         try {
-            const query = "SELECT * FROM book WHERE stock = 1 ORDER BY id ASC"
+            const query = "SELECT * FROM book WHERE stock = 1 ORDER BY id ASC";
             const result_query = await db.query(query);
-            const result = result_query.rows
+            const result = result_query.rows;
             return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Book");
+            throw new Error("Error: Failed to get available books");
         }
     }
 
-    async findId(id) {
+    static async findId(id) {
         try {
-            const query = "SELECT id FROM book WHERE id = $1"
+            const query = "SELECT * FROM book WHERE id = $1";
             const result_query = await db.query(query, [id]);
             const result = result_query.rows;
             return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Book by Id");
+            throw new Error("Error: Failed to get book by ID");
         }
     }
 
-    async findCode(code) {
+    static async findCode(code) {
         try {
-            const query = "SELECT code FROM book WHERE code = $1";
+            const query = "SELECT * FROM book WHERE code = $1";
             const result = await db.query(query, [code]);
-            return result.rows
+            return result.rows;
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error Get Data Book by Id");
+            throw new Error("Error: Failed to get book by code");
         }
     }
 
     static async create(data) {
         try {
-            const {
-                code,
-                title,
-                author,
-                stock
-            } = data;
-
-            const Book_repository = new BOOK_REPOSITORY();
-            const checkCode = await Book_repository.findCode(code);
+            const { code, title, author, stock } = data;
+            const checkCode = await this.findCode(code);
 
             if (checkCode.length > 0) {
                 throw new Error('Error: Code already exists');
@@ -69,56 +62,52 @@ class BOOK_REPOSITORY {
                 const result = result_query.rows;
                 return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
             }
-
         } catch (error) {
             console.error(error.message);
-            throw new Error("Error: Error Add Data Book");
+            throw new Error("Error: Failed to add book");
         }
     }
 
     static async updateData(id, data) {
         try {
-            const {
-                code,
-                title,
-                author,
-                stock
-            } = data;
+            const { code, title, author, stock } = data;
+            const findId = await this.findId(id);
+            const checkCode = await this.findCode(code);
 
-            const Book_repository = new BOOK_REPOSITORY();
-            const findId = await Book_repository.findId(id);
-            const checkCode = await Book_repository.findCode(code);
-
-            if (!findId.length > 0) {
-                throw new Error('Error: Id not found');
+            if (findId.length === 0) {
+                throw new Error('Error: ID not found');
             }
 
             if (checkCode.length > 0) {
                 throw new Error('Error: Code already exists');
             }
 
-            const query = "UPDATE book SET code = $1, title = $2, author = $3, stock = $4 WHERE id = $5";
+            const query = "UPDATE book SET code = $1, title = $2, author = $3, stock = $4 WHERE id = $5 RETURNING *";
             const result_query = await db.query(query, [code, title, author, stock, id]);
             const result = result_query.rows;
-            console.log(result);
             return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error update Data stock at Book");
+            throw new Error("Error: Failed to update book");
         }
     }
 
     static async deleteData(id) {
         try {
+            const findId = await this.findId(id);
+
+            if (findId.length === 0) {
+                throw new Error('Error: ID not found');
+            }
+
             const query = "DELETE FROM book WHERE id = $1";
-            const result_query = await db.query(query, [id]);
-            const result = result_query.rows;
-            return result.map(results => new BOOK_DOMAIN(results.id, results.code, results.title, results.author, results.stock));
+            await db.query(query, [id]);
+            return { success: true };
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error delete Data Book");
+            throw new Error("Error: Failed to delete book");
         }
     }
 }
 
-module.exports = BOOK_REPOSITORY
+module.exports = BOOK_REPOSITORY;

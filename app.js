@@ -33,7 +33,10 @@ const swaggerDefinition = {
 
 const options = {
     swaggerDefinition,
-    apis: ['./presentation/routes/v1/book/index.js'], // Jalur ke file rute
+    apis: [
+        './presentation/routes/v1/book/index.js',
+        './presentation/routes/v1/member/index.js',
+    ], // Jalur ke file rute
 };
 
 const swaggerSpec = swaggerJsdoc(options);
