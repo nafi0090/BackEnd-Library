@@ -1,37 +1,41 @@
 const db = require('../config/db.config');
 
-const HISTORY = {
-    index: async () => {
+class HISTORY_REPOSITORY {
+    static async index() {
         try {
-            const query = "SELECT * FROM History";
+            const query = "SELECT * FROM history";
             const result = await db.query(query);
             return result.rows;
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Error Get Data History");
         }
-    },
-    create: async (data) => {
+    }
+
+    static async findId(id) {
         try {
-            const {
-                memberId,
-                bookId,
-                borrowedDate,
-                returnedDate
-            } = data;
-            const query = "INSERT INTO History (memberId, bookId, borrowedDate, returnedDate) VALUES ($1, $2, $3, $4) RETURNING *";
-            const result = await this.db.query(query, [memberId, bookId, borrowedDate, returnedDate]);
-            return result.rows;
+            const query = "SELECT * FROM history WHERE id = $1";
+            const result_query = await db.query(query, [id]);
+            const result = result_query.rows;
+            return result
         } catch (err) {
             console.error(err.message);
-            throw new Error("Error: Error add Data History");
+            throw new Error("Error: Failed to get history by ID");
         }
-    },
-    delete: async (id) => {
+    }
+    static async delete(id) {
         try {
-            const query = "DELETE FROM History WHERE id = $1";
-            const result = await this.db.query(query, [id]);
-            return result.rows;
+            const findId = await this.findId(id);
+
+            if (findId.length === 0) {
+                throw new Error('Error: ID not found');
+            }
+            
+            const query = "DELETE FROM history WHERE id = $1";
+            const result = await db.query(query, [id]);
+            return {
+                success: true
+            };
         } catch (err) {
             console.error(err.message);
             throw new Error("Error: Error delete Data History");
@@ -39,4 +43,4 @@ const HISTORY = {
     }
 }
 
-module.exports = HISTORY;
+module.exports = HISTORY_REPOSITORY;

@@ -86,6 +86,23 @@ class MEMBER_REPOSITORY {
         }
     }
 
+    static async setPenalty(data, penaltyDate) {
+        try {
+            const {
+                bookid,
+                memberid
+            } = data
+
+            const query = "UPDATE member SET penaltyenddate = $1 WHERE id = $2";
+            const result_query = await db.query(query, [penaltyDate, memberid]);
+            const result = result_query.rows;
+            return result.map(results => new MEMBER_DOMAIN(results.id, results.penaltyenddate));
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to update penalty member");
+        }
+    }
+
     static async deleteData(id) {
         try {
             const findId = await this.findId(id);

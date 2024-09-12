@@ -57,6 +57,10 @@ class BORROWING_REPOSITORY {
             // const query = "WITH inserted_borrowing AS ( INSERT INTO borrowing (memberId, bookId) VALUES ($1, $2) RETURNING *) UPDATE book SET stock = 0 WHERE id = $2;"
             const query = "INSERT INTO borrowing (memberid, bookid) VALUES ($1, $2) RETURNING *";
             const result_query = await db.query(query, [memberid, bookid]);
+
+            const query_stock = "UPDATE book SET stock = 0 WHERE id = $1"
+            await db.query(query_stock, [bookid]);
+
             return result_query.rows;
         } catch (err) {
             console.error(err.message);
@@ -64,9 +68,45 @@ class BORROWING_REPOSITORY {
         }
     }
 
-    static asyncfindBorrowingByMemberAndBook(data) {
-        
+    static async findBorrowingByMemberAndBook(data) {
+        try {
+            const {
+                memberid,
+                bookid
+            } = data
+            const query = "SELECT * FROM borrowing WHERE memberid = $1 AND bookid = $2";
+            const result_query = await db.query(query, [memberid, bookid]);
+            return result_query.rows;
 
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to check member and book data borrow");
+        }
+    }
+
+    static async returnBook(borrowing, date) {
+        try {
+            const {
+                id,
+                memberid,
+                bookid,
+                borrowedDate
+            } = borrowing[0]
+
+            const queryDeleteBorrowing = "DELETE FROM borrowing WHERE id = $1";
+            const resultDeleteBorrowuing = await db.query(queryDeleteBorrowing, [id]);
+
+            const queryUpdateStock = "UPDATE book SET stock = 1 WHERE id = $1";
+            const resultUpdateStock = await db.query(queryUpdateStock, [bookid]);
+
+            const queryInsertHistory = "INSERT INTO history (memberid, bookid, borroweddate, returneddate) VALUES ($1, $2, $3, $4)";
+            const resultInsertHistory = await db.query(queryInsertHistory, [memberid, bookid, borrowedDate, date]);
+
+            return resultInsertHistory.rows;
+        } catch (err) {
+            console.error(err.message);
+            throw new Error("Error: Failed to check member and book data borrow");
+        }
     }
 }
 

@@ -2,11 +2,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const API_ROUTES = require('./presentation/routes');
 
 var app = express();
+
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -27,7 +30,7 @@ const swaggerDefinition = {
         description: 'API documentation for Library Service',
     },
     servers: [{
-        url: 'http://localhost:5000',
+        url: 'https://back-end-library.up.railway.app/',
     }, ],
 };
 
@@ -37,6 +40,8 @@ const options = {
         './presentation/routes/v1/book/index.js',
         './presentation/routes/v1/member/index.js',
         './presentation/routes/v1/borrow/index.js',
+        './presentation/routes/v1/history/index.js',
+        './presentation/routes/v1/return/index.js',
     ], // Jalur ke file rute
 };
 

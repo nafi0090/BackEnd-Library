@@ -38,7 +38,7 @@ model borrowing {
   id Int @id @default(autoincrement())
   memberid Int
   bookid Int @unique
-  borrowedDate DateTime @default(now())
+  borroweddate DateTime @default(now())
 
   Member member @relation(fields: [memberid], references: [id])
   book book @relation(fields: [bookid], references: [id])
@@ -48,8 +48,8 @@ model history {
   id Int @id @default(autoincrement())
   memberid Int
   bookid Int
-  borrowedDate DateTime?
-  returnedDate DateTime?
+  borroweddate DateTime
+  returneddate DateTime @default(now())
 
   Member member @relation(fields: [memberid], references: [id])
   book book @relation(fields: [bookid], references: [id])
