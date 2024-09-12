@@ -37,17 +37,6 @@ class MEMBER_REPOSITORY {
         }
     }
 
-    static async penaltyMember(id) {
-        try {
-            const query = "SELECT * FROM member WHERE id = $1 ORDER BY id ASC";
-            const result_query = await db.query(query, [id]);
-            return result_query.rows;
-        } catch (err) {
-            console.error(err.message);
-            throw new Error("Error: Failed to get data penalty's member");
-        }
-    }
-
     static async create(data) {
         try {
             const {

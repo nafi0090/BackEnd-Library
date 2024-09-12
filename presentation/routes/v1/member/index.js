@@ -44,6 +44,9 @@ const MEMBER_CONTROLLER = require('../../../controller/member.controller');
  *                         type: string
  *                         format: date-time
  *                         example: null
+ *                       borrowedbook:
+ *                         type: int
+ *                         example: 1
  *       500:
  *         description: Server error
  *         content:

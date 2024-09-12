@@ -36,6 +36,7 @@ const options = {
     apis: [
         './presentation/routes/v1/book/index.js',
         './presentation/routes/v1/member/index.js',
+        './presentation/routes/v1/borrow/index.js',
     ], // Jalur ke file rute
 };
 

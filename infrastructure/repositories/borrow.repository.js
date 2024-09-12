@@ -50,13 +50,13 @@ class BORROWING_REPOSITORY {
     static async create(data) {
         try {
             const {
-                memberId,
-                bookId
+                memberid,
+                bookid
             } = data;
             // 
             // const query = "WITH inserted_borrowing AS ( INSERT INTO borrowing (memberId, bookId) VALUES ($1, $2) RETURNING *) UPDATE book SET stock = 0 WHERE id = $2;"
             const query = "INSERT INTO borrowing (memberid, bookid) VALUES ($1, $2) RETURNING *";
-            const result_query = await db.query(query, [memberId, bookId]);
+            const result_query = await db.query(query, [memberid, bookid]);
             return result_query.rows;
         } catch (err) {
             console.error(err.message);

@@ -28,7 +28,7 @@ model member{
   id Int @id @default(autoincrement())
   code String @unique
   name String
-  penaltyEndDate DateTime?
+  penaltyenddate DateTime?
 
   Borrowing borrowing[]
   History history[]
