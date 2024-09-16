@@ -1,10 +1,10 @@
 class History {
-    constructor(id, memberId, bookId, borrowedDate, ReturnedDate) {
+    constructor(id, memberid, bookid, borroweddate, Returneddate) {
         this.id = id;
-        this.memberId = memberId;
-        this.bookId = bookId;
-        this.borrowedDate = borrowedDate;
-        this.returnedDate = returnedDate;
+        this.memberid = memberid;
+        this.bookid = bookid;
+        this.borroweddate = borroweddate;
+        this.Returneddate = Returneddate;
     }
 
 }

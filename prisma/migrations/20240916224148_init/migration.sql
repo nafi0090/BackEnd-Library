@@ -24,7 +24,7 @@ CREATE TABLE "borrowing" (
     "id" SERIAL NOT NULL,
     "memberid" INTEGER NOT NULL,
     "bookid" INTEGER NOT NULL,
-    "borrowedDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "borroweddate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "borrowing_pkey" PRIMARY KEY ("id")
 );
@@ -34,8 +34,8 @@ CREATE TABLE "history" (
     "id" SERIAL NOT NULL,
     "memberid" INTEGER NOT NULL,
     "bookid" INTEGER NOT NULL,
-    "borrowedDate" TIMESTAMP(3) NOT NULL,
-    "returnedDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "borroweddate" TIMESTAMP(3) NOT NULL,
+    "returneddate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "history_pkey" PRIMARY KEY ("id")
 );

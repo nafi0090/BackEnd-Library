@@ -90,7 +90,7 @@ class BORROWING_REPOSITORY {
                 id,
                 memberid,
                 bookid,
-                borrowedDate
+                borroweddate
             } = borrowing[0]
 
             const queryDeleteBorrowing = "DELETE FROM borrowing WHERE id = $1";
@@ -100,7 +100,7 @@ class BORROWING_REPOSITORY {
             const resultUpdateStock = await db.query(queryUpdateStock, [bookid]);
 
             const queryInsertHistory = "INSERT INTO history (memberid, bookid, borroweddate, returneddate) VALUES ($1, $2, $3, $4)";
-            const resultInsertHistory = await db.query(queryInsertHistory, [memberid, bookid, borrowedDate, date]);
+            const resultInsertHistory = await db.query(queryInsertHistory, [memberid, bookid, borroweddate, date]);
 
             return resultInsertHistory.rows;
         } catch (err) {

@@ -1,11 +1,11 @@
 const BORROWING_REPOSITORY = require('../../infrastructure/repositories/borrow.repository');
 const MEMBER_REPOSITORY = require('../../infrastructure/repositories/member.repository');
-const BOOK_REPOSITORY = require('../../infrastructure/repositories/book.repository');
 
 class RETURN_USECASE {
     static async returnBook(data) {
 
         const borrowing = await BORROWING_REPOSITORY.findBorrowingByMemberAndBook(data);
+
         if (!borrowing) {
             throw new Error('The member did not borrow this book');
         }
@@ -23,7 +23,7 @@ class RETURN_USECASE {
             await MEMBER_REPOSITORY.setPenalty(data, penaltyDate);
         }
 
-        await BORROWING_REPOSITORY.returnBook(borrowing, today)
+        const result = await BORROWING_REPOSITORY.returnBook(borrowing, today)
 
         return {
             message: 'Book returned successfully',
