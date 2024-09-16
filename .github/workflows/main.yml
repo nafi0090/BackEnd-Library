@@ -23,9 +23,6 @@ jobs:
       - name: Testing Jest
         run: npm run test
 
-      - name: Migrate Databases
-        run: npx prisma migrate deploy
-
       - name: Install Railway
         run: npm i -g @railway/cli
 
